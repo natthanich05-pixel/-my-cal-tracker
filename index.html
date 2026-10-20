@@ -1,348 +1,604 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pro Calorie & IF Tracker by Dream</title>
-  <style>
-    * { box-sizing: border-box; font-family: 'Sukhumvit Set', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: #f0f4f8; margin: 0; padding: 16px; color: #2d3748; }
-    .container { max-width: 500px; margin: 0 auto; background: #ffffff; padding: 20px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-    h2, h3 { text-align: center; color: #1a202c; margin-top: 0; }
-    .card { background: #f8fafc; padding: 16px; border-radius: 14px; margin-bottom: 16px; border: 1px solid #e2e8f0; }
-    label { font-size: 13px; font-weight: 700; display: block; margin-bottom: 6px; color: #4a5568; }
-    input, select { width: 100%; padding: 10px 12px; margin-bottom: 12px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 14px; background: #fff; }
-    button { width: 100%; padding: 12px; border: none; border-radius: 10px; background-color: #10b981; color: white; font-size: 15px; font-weight: bold; cursor: pointer; transition: all 0.2s; }
-    button:hover { background-color: #059669; }
-    .btn-stop { background-color: #ef4444; }
-    .btn-stop:hover { background-color: #dc2626; }
-    .btn-danger { background-color: #f43f5e; margin-top: 10px; }
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Calorie & IF Tracker - คุณ ณัฐนิช</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Prompt & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    /* สรุปแคลอรี & IF */
-    .stat-box { display: flex; justify-content: space-between; text-align: center; gap: 8px; margin-top: 10px; }
-    .stat-item { flex: 1; padding: 10px 4px; background: #fff; border-radius: 10px; border: 1px solid #edf2f7; }
-    .stat-number { font-size: 18px; font-weight: 800; color: #1e293b; margin-top: 4px; }
-    .macro-box { display: flex; justify-content: space-around; background: #e0f2fe; padding: 10px; border-radius: 10px; margin-top: 10px; font-size: 12px; font-weight: bold; color: #0369a1; }
-    
-    /* IF Timer Style */
-    .timer-display { font-size: 28px; font-weight: 800; text-align: center; color: #0f172a; margin: 10px 0; font-family: monospace; }
-    .progress-bar-bg { background: #e2e8f0; height: 10px; border-radius: 5px; overflow: hidden; margin-bottom: 12px; }
-    .progress-bar-fill { background: #6366f1; height: 100%; width: 0%; transition: width 0.5s; }
-    
-    /* รายการอาหาร */
-    .food-list { list-style: none; padding: 0; margin-top: 10px; }
-    .food-item { display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid #f1f5f9; background: #fff; border-radius: 8px; margin-bottom: 8px; }
-    .food-img { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; margin-right: 10px; border: 1px solid #e2e8f0; }
-    .food-info { flex: 1; font-size: 13px; }
-    .del-btn { background: none; border: none; color: #ef4444; cursor: pointer; font-weight: bold; font-size: 16px; padding: 4px 8px; width: auto; }
-    .search-results { max-height: 150px; overflow-y: auto; background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; margin-top: -10px; margin-bottom: 12px; display: none; }
-    .search-item { padding: 8px 12px; cursor: pointer; font-size: 13px; border-bottom: 1px solid #f1f5f9; }
-    .search-item:hover { background: #f1f5f9; }
-  </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Prompt', 'Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                        },
+                        purpleBrand: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+            background: linear-gradient(135deg, #f6f8fd 0%, #eef2f9 100%);
+            min-height: 100vh;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 4px 10px -2px rgba(0, 0, 0, 0.02);
+        }
+        .pulse-ring {
+            box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4);
+            animation: pulse-animation 2s infinite;
+        }
+        @keyframes pulse-animation {
+            0% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4); }
+            70% { box-shadow: 0 0 0 12px rgba(139, 92, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); }
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+    </style>
 </head>
-<body>
+<body class="text-slate-800 pb-12">
 
-<div class="container">
-  <h2>🥗 Pro Calorie & IF Tracker</h2>
-
-  <!-- 1. ส่วนตั้งเป้าหมาย BMR/TDEE -->
-  <div class="card">
-    <label>🎯 คำนวณเป้าหมายแคลอรีประจำวัน</label>
-    <div style="display: flex; gap: 8px;">
-      <select id="gender"><option value="male">ชาย</option><option value="female">หญิง</option></select>
-      <input type="number" id="age" placeholder="อายุ" value="25">
-    </div>
-    <div style="display: flex; gap: 8px;">
-      <input type="number" id="height" placeholder="ส่วนสูง (ซม.)" value="170">
-      <input type="number" id="weight" placeholder="น้ำหนัก (กก.)" value="65">
-    </div>
-    <select id="activity">
-      <option value="1.2">นั่งทำงานอยู่กับที่ / ไม่ออกกำลังกาย</option>
-      <option value="1.375">ออกกำลังกายเบาๆ 1-3 วัน/สัปดาห์</option>
-      <option value="1.55">ออกกำลังกายปานกลาง 3-5 วัน/สัปดาห์</option>
-      <option value="1.725">ออกกำลังกายหนัก 6-7 วัน/สัปดาห์</option>
-    </select>
-    <button onclick="calculateTDEE()">บันทึกเป้าหมาย</button>
-  </div>
-
-  <!-- 2. ส่วนจับเวลา Fasting (IF) -->
-  <div class="card" style="background: #faf5ff; border-color: #e9d5ff;">
-    <label style="color: #6b21a8;">⏱️ ตัวช่วยทำ Fasting (IF)</label>
-    <select id="ifPlan" onchange="changeIFPlan()">
-      <option value="16">IF 16/8 (อด 16 ชม. / ทาน 8 ชม.)</option>
-      <option value="18">IF 18/6 (อด 18 ชม. / ทาน 6 ชม.)</option>
-      <option value="20">IF 20/4 (อด 20 ชม. / ทาน 4 ชม.)</option>
-      <option value="14">IF 14/10 (อด 14 ชม. / ทาน 10 ชม.)</option>
-    </select>
-    <div class="timer-display" id="ifTimerDisplay">16:00:00</div>
-    <div class="progress-bar-bg"><div class="progress-bar-fill" id="ifProgress"></div></div>
-    <button id="ifBtn" style="background-color: #8b5cf6;" onclick="toggleIF()">เริ่ม Fasting</button>
-  </div>
-
-  <!-- 3. แผงสรุปแคลอรี & สารอาหาร -->
-  <div class="card">
-    <div class="stat-box">
-      <div class="stat-item"><div>เป้าหมาย</div><div class="stat-number" id="targetCal">0</div></div>
-      <div class="stat-item"><div>ทานแล้ว</div><div class="stat-number" id="consumedCal">0</div></div>
-      <div class="stat-item"><div>คงเหลือ</div><div class="stat-number" id="remainingCal">0</div></div>
-    </div>
-    <div class="macro-box">
-      <div>P (โปรตีน): <span id="totalP">0</span>g</div>
-      <div>C (คาร์บ): <span id="totalC">0</span>g</div>
-      <div>F (ไขมัน): <span id="totalF">0</span>g</div>
-    </div>
-  </div>
-
-  <!-- 4. บันทึกอาหารและรูปถ่าย -->
-  <div class="card">
-    <label>🔍 ค้นหาเมนูอาหาร (อ้างอิงมาตรฐานโภชนาการ)</label>
-    <input type="text" id="foodSearch" placeholder="พิมพ์ชื่ออาหาร เช่น กะเพรา, ข้าวมันไก่..." oninput="searchFood()">
-    <div class="search-results" id="searchResults"></div>
-
-    <label>ชื่อเมนูอาหาร</label>
-    <input type="text" id="foodName" placeholder="เช่น ข้าวมันไก่">
-    
-    <div style="display: flex; gap: 8px;">
-      <input type="number" id="foodCal" placeholder="แคลอรี (kcal)">
-      <input type="number" id="foodP" placeholder="โปรตีน (g)">
-    </div>
-    <div style="display: flex; gap: 8px;">
-      <input type="number" id="foodC" placeholder="คาร์บ (g)">
-      <input type="number" id="foodF" placeholder="ไขมัน (g)">
-    </div>
-
-    <label>📸 แนบรูปภาพมื้ออาหาร (ถ้ามี)</label>
-    <input type="file" id="foodImage" accept="image/*">
-
-    <button onclick="addFood()">+ บันทึกมื้ออาหาร</button>
-  </div>
-
-  <!-- 5. รายการอาหารวันนี้ -->
-  <h3>มื้ออาหารวันนี้</h3>
-  <ul class="food-list" id="foodList"></ul>
-
-  <button class="btn-danger" onclick="resetDay()">ล้างข้อมูลเริ่มวันใหม่</button>
-</div>
-
-<script>
-  // ฐานข้อมูลอาหารอ้างอิงมาตรฐานกรมอนามัย / USDA
-  const foodDatabase = [
-    { name: "ข้าวมันไก่", cal: 596, p: 21, c: 67, f: 26 },
-    { name: "ข้าวผัดหมูใส่ไข่", cal: 557, p: 18, c: 68, f: 22 },
-    { name: "กะเพราไก่ไข่ดาว", cal: 630, p: 26, c: 55, f: 33 },
-    { name: "ข้าวไข่เจียวหมูสับ", cal: 480, p: 15, c: 45, f: 27 },
-    { name: "ส้มตำไทย + ไก่ย่าง (1 สะโพก)", cal: 410, p: 28, c: 25, f: 22 },
-    { name: "ก๋วยเตี๋ยวเรือน้ำตกหมู", cal: 350, p: 16, c: 40, f: 12 },
-    { name: "ผัดไทยกุ้งสด", cal: 580, p: 20, c: 65, f: 26 },
-    { name: "สลัดอกไก่ย่าง (น้ำใส)", cal: 240, p: 30, c: 12, f: 7 },
-    { name: "ต้มยำกุ้งน้ำใส", cal: 120, p: 18, c: 6, f: 2 },
-    { name: "ชาไทยเย็น (สูตรปกติ)", cal: 230, p: 3, c: 38, f: 7 },
-    { name: "อเมริกาโน่เย็น (ไม่หวาน)", cal: 15, p: 0, c: 3, f: 0 },
-    { name: "ไข่ต้ม (1 ฟอง)", cal: 75, p: 7, c: 0.6, f: 5 },
-    { name: "อกไก่ต้ม (100g)", cal: 165, p: 31, c: 0, f: 3.6 }
-  ];
-
-  let targetTDEE = parseInt(localStorage.getItem('targetTDEE')) || 2000;
-  let foods = JSON.parse(localStorage.getItem('todayFoods')) || [];
-  
-  // IF State
-  let ifStartTime = localStorage.getItem('ifStartTime') ? parseInt(localStorage.getItem('ifStartTime')) : null;
-  let ifHours = parseInt(localStorage.getItem('ifHours')) || 16;
-  let ifTimerInterval = null;
-
-  function updateUI() {
-    document.getElementById('targetCal').innerText = targetTDEE;
-    let totalCal = 0, totalP = 0, totalC = 0, totalF = 0;
-
-    foods.forEach(f => {
-      totalCal += f.cal || 0;
-      totalP += f.p || 0;
-      totalC += f.c || 0;
-      totalF += f.f || 0;
-    });
-
-    document.getElementById('consumedCal').innerText = totalCal;
-    document.getElementById('totalP').innerText = Math.round(totalP);
-    document.getElementById('totalC').innerText = Math.round(totalC);
-    document.getElementById('totalF').innerText = Math.round(totalF);
-
-    let remaining = targetTDEE - totalCal;
-    let remElem = document.getElementById('remainingCal');
-    remElem.innerText = remaining;
-    remElem.style.color = remaining < 0 ? '#ef4444' : '#10b981';
-
-    let listElem = document.getElementById('foodList');
-    listElem.innerHTML = '';
-    foods.forEach((f, idx) => {
-      let imgHtml = f.img ? `<img src="${f.img}" class="food-img">` : `<div class="food-img" style="display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#94a3b8;">🍽️</div>`;
-      listElem.innerHTML += `
-        <li class="food-item">
-          <div style="display:flex;align-items:center;">
-            ${imgHtml}
-            <div class="food-info">
-              <strong>${f.name}</strong><br>
-              <span style="color:#64748b;">${f.cal} kcal | P:${f.p}g C:${f.c}g F:${f.f}g</span>
+    <!-- Header Navigation Bar -->
+    <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100 shadow-sm">
+        <div class="max-w-xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-white shadow-md shadow-emerald-200">
+                    <i class="fa-solid font-bold fa-leaf text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent leading-tight">
+                        Pro Calorie & IF Tracker
+                    </h1>
+                    <p class="text-xs text-emerald-600 font-medium flex items-center gap-1">
+                        <i class="fa-solid fa-circle text-[8px] animate-pulse"></i> กำลังใช้งาน
+                    </p>
+                </div>
             </div>
-          </div>
-          <button class="del-btn" onclick="removeFood(${idx})">✕</button>
-        </li>`;
-    });
+            
+            <!-- User Profile Badge -->
+            <div class="flex items-center space-x-2 bg-slate-100/80 px-3 py-1.5 rounded-full border border-slate-200">
+                <div class="w-7 h-7 rounded-full bg-purple-600 text-white flex items-center justify-center text-xs font-semibold">
+                    ณ
+                </div>
+                <span class="text-xs font-semibold text-slate-700">คุณ ณัฐนิช</span>
+            </div>
+        </div>
+    </header>
 
-    localStorage.setItem('todayFoods', JSON.stringify(foods));
-    localStorage.setItem('targetTDEE', targetTDEE);
-  }
+    <!-- Main Container -->
+    <main class="max-w-xl mx-auto px-4 pt-6 space-y-6">
 
-  function searchFood() {
-    let query = document.getElementById('foodSearch').value.toLowerCase().trim();
-    let resBox = document.getElementById('searchResults');
-    if (!query) { resBox.style.display = 'none'; return; }
+        <!-- Banner Greeting -->
+        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-emerald-600 via-teal-600 to-indigo-600 p-6 text-white shadow-xl shadow-emerald-500/10">
+            <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="relative z-10">
+                <span class="inline-block px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-medium mb-2 text-emerald-50">
+                    👋 สวัสดีวันนี้น่าสดใส
+                </span>
+                <h2 class="text-xl font-bold">สวัสดีคุณ ณัฐนิช!</h2>
+                <p class="text-xs text-emerald-100 mt-1 leading-relaxed">
+                    วางแผนการทานอาหาร คำนวณพลังงาน และทำ IF อย่างถูกวิธี เพื่อหุ่นดีสุขภาพอย่างยั่งยืน
+                </p>
+            </div>
+        </div>
 
-    let matches = foodDatabase.filter(f => f.name.toLowerCase().includes(query));
-    if (matches.length > 0) {
-      resBox.innerHTML = '';
-      matches.forEach(f => {
-        resBox.innerHTML += `<div class="search-item" onclick='selectFood(${JSON.stringify(f)})'>${f.name} (${f.cal} kcal)</div>`;
-      });
-      resBox.style.display = 'block';
-    } else {
-      resBox.style.display = 'none';
-    }
-  }
+        <!-- Section 1: Calorie & Weight Target Calculator -->
+        <section class="glass-card rounded-3xl p-5 border border-white">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-sm font-bold">
+                        🎯
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-base">คำนวณเป้าหมายแคลอรีประจำวัน</h3>
+                        <p class="text-[11px] text-slate-500">อ้างอิงสูตรคำนวณโภชนาการ Mifflin-St Jeor</p>
+                    </div>
+                </div>
+                <button id="toggleCalcBtn" onclick="toggleCalculator()" class="text-xs text-emerald-600 hover:underline font-medium">
+                    ย่อ/ขยาย
+                </button>
+            </div>
 
-  function selectFood(item) {
-    document.getElementById('foodName').value = item.name;
-    document.getElementById('foodCal').value = item.cal;
-    document.getElementById('foodP').value = item.p;
-    document.getElementById('foodC').value = item.c;
-    document.getElementById('foodF').value = item.f;
-    document.getElementById('searchResults').style.display = 'none';
-    document.getElementById('foodSearch').value = '';
-  }
+            <form id="calcForm" onsubmit="event.preventDefault(); calculateCalories();" class="space-y-4">
+                <!-- Gender & Age -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">เพศ</label>
+                        <select id="gender" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium">
+                            <option value="female" selected>หญิง</option>
+                            <option value="male">ชาย</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">อายุ (ปี)</label>
+                        <input type="number" id="age" value="29" min="12" max="100" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium">
+                    </div>
+                </div>
 
-  function calculateTDEE() {
-    let gender = document.getElementById('gender').value;
-    let age = parseFloat(document.getElementById('age').value);
-    let h = parseFloat(document.getElementById('height').value);
-    let w = parseFloat(document.getElementById('weight').value);
-    let act = parseFloat(document.getElementById('activity').value);
+                <!-- Height, Current Weight, Target Weight -->
+                <div class="grid grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">ส่วนสูง (ซม.)</label>
+                        <input type="number" id="height" value="164" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">น้ำหนักปัจจุบัน</label>
+                        <input type="number" id="currentWeight" value="77" step="0.1" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">เป้าหมาย (กก.)</label>
+                        <input type="number" id="targetWeight" value="62" step="0.1" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium">
+                    </div>
+                </div>
 
-    let bmr = (gender === 'male') ? (10 * w) + (6.25 * h) - (5 * age) + 5 : (10 * w) + (6.25 * h) - (5 * age) - 161;
-    targetTDEE = Math.round(bmr * act);
-    updateUI();
-    alert('อัปเดตเป้าหมายเรียบร้อยแล้ว!');
-  }
+                <!-- Activity Level -->
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">ระดับการออกกำลังกาย / กิจกรรม</label>
+                    <select id="activity" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium">
+                        <option value="1.2" selected>นั่งทำงานอยู่กับที่ / ไม่ออกกำลังกาย</option>
+                        <option value="1.375">ออกกำลังกายเบาๆ (1-3 วัน/สัปดาห์)</option>
+                        <option value="1.55">ออกกำลังกายปานกลาง (3-5 วัน/สัปดาห์)</option>
+                        <option value="1.725">ออกกำลังกายหนัก (6-7 วัน/สัปดาห์)</option>
+                    </select>
+                </div>
 
-  function addFood() {
-    let name = document.getElementById('foodName').value.trim();
-    let cal = parseInt(document.getElementById('foodCal').value) || 0;
-    let p = parseFloat(document.getElementById('foodP').value) || 0;
-    let c = parseFloat(document.getElementById('foodC').value) || 0;
-    let f = parseFloat(document.getElementById('foodF').value) || 0;
-    let imgInput = document.getElementById('foodImage');
+                <!-- Target Weight Loss Rate -->
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">อัตราการลดน้ำหนักที่ต้องการ</label>
+                    <select id="lossRate" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium">
+                        <option value="350">ลดแบบค่อยเป็นค่อยไป (~0.3 กก./สัปดาห์)</option>
+                        <option value="500" selected>ลดแบบมาตรฐาน สุขภาพดี (~0.5 กก./สัปดาห์)</option>
+                        <option value="700">ลดแบบเข้มข้น (~0.7 กก./สัปดาห์)</option>
+                    </select>
+                </div>
 
-    if (!name || cal <= 0) {
-      alert('กรุณากรอกชื่ออาหารและแคลอรี');
-      return;
-    }
+                <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-3 rounded-2xl shadow-lg shadow-emerald-500/20 transition-all duration-200 active:scale-[0.99] flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-calculator"></i> คำนวณและบันทึกเป้าหมาย
+                </button>
+            </form>
 
-    if (imgInput.files && imgInput.files[0]) {
-      let reader = new FileReader();
-      reader.onload = function(e) {
-        foods.push({ name, cal, p, c, f, img: e.target.result });
-        clearFoodForm();
-        updateUI();
-      };
-      reader.readAsDataURL(imgInput.files[0]);
-    } else {
-      foods.push({ name, cal, p, c, f, img: null });
-      clearFoodForm();
-      updateUI();
-    }
-  }
+            <!-- Calculation Result Display -->
+            <div id="calcResultDisplay" class="mt-5 p-4 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200/60 space-y-3">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <span class="text-[11px] font-bold text-emerald-700 uppercase tracking-wider">สรุปเป้าหมายพลังงานของคุณ ณัฐนิช</span>
+                        <h4 class="text-xl font-bold text-slate-800 mt-0.5" id="targetCalorieText">ต้องกินไม่เกิน 1,420 แคล/วัน</h4>
+                    </div>
+                    <span class="text-2xl">🔥</span>
+                </div>
 
-  function clearFoodForm() {
-    document.getElementById('foodName').value = '';
-    document.getElementById('foodCal').value = '';
-    document.getElementById('foodP').value = '';
-    document.getElementById('foodC').value = '';
-    document.getElementById('foodF').value = '';
-    document.getElementById('foodImage').value = '';
-  }
+                <div class="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-emerald-200/50">
+                    <div class="bg-white/80 p-2.5 rounded-xl border border-emerald-100">
+                        <span class="text-slate-500 block">BMR (พลังงานขั้นต่ำ):</span>
+                        <span class="font-bold text-slate-700" id="bmrValue">1,480 kcal</span>
+                    </div>
+                    <div class="bg-white/80 p-2.5 rounded-xl border border-emerald-100">
+                        <span class="text-slate-500 block">TDEE (เผาผลาญรวม):</span>
+                        <span class="font-bold text-slate-700" id="tdeeValue">1,776 kcal</span>
+                    </div>
+                </div>
 
-  function removeFood(idx) {
-    foods.splice(idx, 1);
-    updateUI();
-  }
+                <div class="p-2.5 bg-white/90 rounded-xl border border-emerald-100 text-xs text-slate-600 flex items-center justify-between">
+                    <span>🎯 น้ำหนักที่จะลด: <strong id="weightToLoseText" class="text-emerald-700">15.0 กก.</strong></span>
+                    <span>⏳ คาดว่าจะใช้เวลา: <strong id="timeToGoalText" class="text-emerald-700">30 สัปดาห์</strong></span>
+                </div>
+            </div>
+        </section>
 
-  function resetDay() {
-    if (confirm('ต้องการล้างข้อมูลบันทึกมื้ออาหารของวันนี้หรือไม่?')) {
-      foods = [];
-      updateUI();
-    }
-  }
+        <!-- Section 2: IF Tracker with Exact Time Window -->
+        <section class="glass-card rounded-3xl p-5 border border-white">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-sm font-bold">
+                        ⏱️
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-base">ตัวช่วยทำ Fasting (IF)</h3>
+                        <p class="text-[11px] text-slate-500">กำหนดและคำนวณเวลาเริ่ม-สิ้นสุดการทาน</p>
+                    </div>
+                </div>
+            </div>
 
-  /* Fasting (IF) Logic */
-  function changeIFPlan() {
-    ifHours = parseInt(document.getElementById('ifPlan').value);
-    localStorage.setItem('ifHours', ifHours);
-    updateIFTimer();
-  }
+            <!-- IF Controls -->
+            <div class="space-y-4">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">เลือกสูตร IF</label>
+                        <select id="ifProtocol" onchange="updateIFSchedule()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 font-medium">
+                            <option value="16:8" selected>IF 16/8 (อด 16 ชม. / ทาน 8 ชม.)</option>
+                            <option value="18:6">IF 18/6 (อด 18 ชม. / ทาน 6 ชม.)</option>
+                            <option value="20:4">IF 20/4 (อด 20 ชม. / ทาน 4 ชม.)</option>
+                            <option value="14:10">IF 14/10 (อด 14 ชม. / ทาน 10 ชม.)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">เวลาเริ่มกินมื้อแรก</label>
+                        <input type="time" id="eatingStartTime" value="12:00" onchange="updateIFSchedule()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 font-medium">
+                    </div>
+                </div>
 
-  function toggleIF() {
-    if (ifStartTime) {
-      if (confirm('ต้องการยกเลิก/จบการ Fasting รอบนี้หรือไม่?')) {
-        ifStartTime = null;
-        localStorage.removeItem('ifStartTime');
-        document.getElementById('ifBtn').innerText = 'เริ่ม Fasting';
-        document.getElementById('ifBtn').classList.remove('btn-stop');
-      }
-    } else {
-      ifStartTime = Date.now();
-      localStorage.setItem('ifStartTime', ifStartTime);
-      document.getElementById('ifBtn').innerText = 'จบ Fasting';
-      document.getElementById('ifBtn').classList.add('btn-stop');
-    }
-    updateIFTimer();
-  }
+                <!-- Display Fasting & Eating Windows (ระบุเวลา - เวลา) -->
+                <div class="p-3.5 bg-purple-50/70 border border-purple-100 rounded-2xl space-y-2">
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="flex items-center gap-1.5 font-medium text-purple-900">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span> ช่วงเวลาทานอาหาร (Eating Window):
+                        </span>
+                        <span class="font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-md" id="eatingWindowTime">12:00 - 20:00 น.</span>
+                    </div>
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="flex items-center gap-1.5 font-medium text-purple-900">
+                            <span class="w-2 h-2 rounded-full bg-purple-600"></span> ช่วงเวลาอดอาหาร (Fasting Window):
+                        </span>
+                        <span class="font-bold text-purple-700 bg-purple-100/80 px-2 py-0.5 rounded-md" id="fastingWindowTime">20:00 - 12:00 น.</span>
+                    </div>
+                </div>
 
-  function updateIFTimer() {
-    if (!ifStartTime) {
-      document.getElementById('ifTimerDisplay').innerText = `${ifHours}:00:00`;
-      document.getElementById('ifProgress').style.width = '0%';
-      return;
-    }
+                <!-- Timer Display Box -->
+                <div class="text-center py-6 px-4 rounded-3xl bg-slate-900 text-white relative overflow-hidden shadow-inner">
+                    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#8b5cf6_1px,transparent_1px)] [background-size:16px_16px]"></div>
+                    
+                    <span id="fastingStatusBadge" class="inline-block px-3 py-1 bg-purple-500/30 text-purple-300 text-xs rounded-full font-medium mb-3 border border-purple-500/30">
+                        พร้อมเริ่ม Fasting
+                    </span>
 
-    let targetTime = ifStartTime + (ifHours * 3600 * 1000);
-    let now = Date.now();
-    let diff = targetTime - now;
+                    <div class="text-4xl sm:text-5xl font-mono font-bold tracking-wider text-white mb-2" id="timerDisplay">
+                        16:00:00
+                    </div>
 
-    if (diff <= 0) {
-      document.getElementById('ifTimerDisplay').innerText = "สำเสร็จ Fasting 🎉";
-      document.getElementById('ifProgress').style.width = '100%';
-      return;
-    }
+                    <!-- Progress Bar -->
+                    <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden max-w-xs mx-auto mb-2">
+                        <div id="fastingProgressBar" class="bg-gradient-to-r from-purple-500 to-indigo-500 h-full w-0 transition-all duration-500"></div>
+                    </div>
+                    <p class="text-[11px] text-slate-400" id="timerSubtext">กดปุ่มด้านล่างเพื่อเริ่มนับเวลาการอดอาหาร</p>
+                </div>
 
-    let hrs = Math.floor(diff / (1000 * 60 * 60));
-    let mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    let secs = Math.floor((diff % (1000 * 60)) / 1000);
+                <!-- Action Button -->
+                <button id="fastingToggleBtn" onclick="toggleFasting()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-2xl shadow-lg shadow-purple-600/20 transition-all duration-200 active:scale-[0.99] flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-play"></i> เริ่ม Fasting
+                </button>
+            </div>
+        </section>
 
-    document.getElementById('ifTimerDisplay').innerText = 
-      `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        <!-- Section 3: Daily Calorie Tracker Dashboard -->
+        <section class="glass-card rounded-3xl p-5 border border-white">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                    <span>🥗</span> แดชบอร์ดสรุปแคลอรีวันนี้
+                </h3>
+                <span class="text-xs text-slate-400" id="todayDate">21 ต.ค. 2026</span>
+            </div>
 
-    let elapsed = now - ifStartTime;
-    let total = ifHours * 3600 * 1000;
-    let pct = Math.min(100, (elapsed / total) * 100);
-    document.getElementById('ifProgress').style.width = pct + '%';
-  }
+            <!-- Cards Summary Grid -->
+            <div class="grid grid-cols-3 gap-2 text-center mb-5">
+                <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100">
+                    <span class="text-[11px] text-slate-500 block mb-0.5">เป้าหมาย</span>
+                    <span class="text-lg font-bold text-slate-800" id="dashboardTargetCal">1,420</span>
+                    <span class="text-[10px] text-slate-400 block">แคล</span>
+                </div>
+                <div class="bg-emerald-50 p-3 rounded-2xl border border-emerald-100">
+                    <span class="text-[11px] text-emerald-600 block mb-0.5">ทานแล้ว</span>
+                    <span class="text-lg font-bold text-emerald-700" id="dashboardEatenCal">850</span>
+                    <span class="text-[10px] text-emerald-500 block">แคล</span>
+                </div>
+                <div class="bg-indigo-50 p-3 rounded-2xl border border-indigo-100">
+                    <span class="text-[11px] text-indigo-600 block mb-0.5">คงเหลือ</span>
+                    <span class="text-lg font-bold text-indigo-700" id="dashboardRemainingCal">570</span>
+                    <span class="text-[10px] text-indigo-500 block">แคล</span>
+                </div>
+            </div>
 
-  // Initialize
-  document.getElementById('ifPlan').value = ifHours;
-  if (ifStartTime) {
-    document.getElementById('ifBtn').innerText = 'จบ Fasting';
-    document.getElementById('ifBtn').classList.add('btn-stop');
-  }
-  setInterval(updateIFTimer, 1000);
-  updateUI();
-</script>
-</body>
-</html>
+            <!-- Calorie Progress Bar -->
+            <div class="mb-5">
+                <div class="flex justify-between text-xs mb-1 font-medium">
+                    <span class="text-slate-600">ความคืบหน้าการทาน</span>
+                    <span class="text-emerald-600 font-bold" id="calProgressPercent">60%</span>
+                </div>
+                <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+                    <div id="calProgressBar" class="bg-gradient-to-r from-emerald-400 to-teal-500 h-full w-[60%] transition-all duration-300"></div>
+                </div>
+            </div>
+
+            <!-- Quick Add Food Form -->
+            <div class="pt-4 border-t border-slate-100">
+                <h4 class="text-xs font-bold text-slate-700 mb-2">+ บันทึกรายการอาหาร</h4>
+                <div class="flex gap-2">
+                    <input type="text" id="foodNameInput" placeholder="ชื่อรายการอาหาร (เช่น ข้าวมันไก่)" class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    <input type="number" id="foodCalInput" placeholder="แคลอรี" class="w-24 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    <button onclick="addFoodItem()" class="bg-slate-800 text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-slate-900 transition-all">
+                        เพิ่ม
+                    </button>
+                </div>
+            </div>
+
+            <!-- Food List -->
+            <div class="mt-4 space-y-2" id="foodLogList">
+                <div class="flex items-center justify-between p-2.5 bg-slate-50/80 rounded-xl text-xs border border-slate-100">
+                    <div class="flex items-center gap-2">
+                        <span class="text-slate-400">08:30</span>
+                        <span class="font-medium text-slate-700">อกไก่ต้ม + ไข่ต้ม 2 ฟอง</span>
+                    </div>
+                    <span class="font-bold text-slate-700">350 kcal</span>
+                </div>
+                <div class="flex items-center justify-between p-2.5 bg-slate-50/80 rounded-xl text-xs border border-slate-100">
+                    <div class="flex items-center gap-2">
+                        <span class="text-slate-400">12:15</span>
+                        <span class="font-medium text-slate-700">เกาเหลาหมูพิเศษ (ไม่กระเทียมเจียว)</span>
+                    </div>
+                    <span class="font-bold text-slate-700">500 kcal</span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer Information -->
+    <footer class="max-w-xl mx-auto px-4 mt-8 text-center text-xs text-slate-400 space-y-1">
+        <p>Pro Calorie & IF Tracker • พัฒนาเพื่อคุณ ณัฐนิช</p>
+        <p class="text-[10px] text-slate-400">การคำนวณแคลอรีอ้างอิงตามหลักการแพทย์และโภชนาการสากล (Mifflin-St Jeor Formula)</p>
+    </footer>
+
+    <!-- Application Script -->
+    <script>
+        // State Variables
+        let targetCalories = 1420;
+        let consumedCalories = 850;
+        let isFastingActive = false;
+        let timerInterval = null;
+        let fastingTotalSeconds = 16 * 3600;
+        let fastingRemainingSeconds = fastingTotalSeconds;
+
+        // Initialize UI on load
+        window.onload = function() {
+            // Set current Thai Date
+            const dateOptions = { day: 'numeric', month: 'short', year: 'numeric' };
+            const today = new Date().toLocaleDateString('th-TH', dateOptions);
+            document.getElementById('todayDate').innerText = today;
+
+            // Initial Calculations
+            calculateCalories();
+            updateIFSchedule();
+        };
+
+        // Toggle Calculator Visibility
+        function toggleCalculator() {
+            const form = document.getElementById('calcForm');
+            form.classList.toggle('hidden');
+        }
+
+        // Calorie Calculation Function (Mifflin-St Jeor)
+        function calculateCalories() {
+            const gender = document.getElementById('gender').value;
+            const age = parseFloat(document.getElementById('age').value) || 29;
+            const height = parseFloat(document.getElementById('height').value) || 164;
+            const currentWeight = parseFloat(document.getElementById('currentWeight').value) || 77;
+            const targetWeight = parseFloat(document.getElementById('targetWeight').value) || 62;
+            const activity = parseFloat(document.getElementById('activity').value) || 1.2;
+            const lossRateDeficit = parseFloat(document.getElementById('lossRate').value) || 500;
+
+            // BMR Formula
+            let bmr = (10 * currentWeight) + (6.25 * height) - (5 * age);
+            if (gender === 'male') {
+                bmr += 5;
+            } else {
+                bmr -= 161;
+            }
+
+            // TDEE = BMR * Activity Factor
+            const tdee = bmr * activity;
+
+            // Safe Deficit Target Calculation
+            let calculatedTarget = Math.round(tdee - lossRateDeficit);
+            
+            // Safety Thresholds (CDC/WHO)
+            const minAllowed = gender === 'female' ? 1200 : 1500;
+            if (calculatedTarget < minAllowed) {
+                calculatedTarget = minAllowed;
+            }
+
+            targetCalories = calculatedTarget;
+
+            // Weight Difference & Estimated Weeks
+            const weightToLose = Math.max(0, currentWeight - targetWeight);
+            // 1 kg fat ~ 7700 kcal
+            const dailyDeficitActual = tdee - targetCalories;
+            let weeksToGoal = 0;
+            if (dailyDeficitActual > 0 && weightToLose > 0) {
+                const totalDeficitNeeded = weightToLose * 7700;
+                const daysNeeded = totalDeficitNeeded / dailyDeficitActual;
+                weeksToGoal = Math.ceil(daysNeeded / 7);
+            }
+
+            // Update UI Elements
+            document.getElementById('targetCalorieText').innerText = `ต้องกินไม่เกิน ${targetCalories.toLocaleString()} แคล/วัน`;
+            document.getElementById('bmrValue').innerText = `${Math.round(bmr).toLocaleString()} kcal`;
+            document.getElementById('tdeeValue').innerText = `${Math.round(tdee).toLocaleString()} kcal`;
+            document.getElementById('weightToLoseText').innerText = `${weightToLose.toFixed(1)} กก.`;
+            document.getElementById('timeToGoalText').innerText = weeksToGoal > 0 ? `${weeksToGoal} สัปดาห์` : 'บรรลุเป้าหมายแล้ว';
+
+            // Update Dashboard Target
+            document.getElementById('dashboardTargetCal').innerText = targetCalories.toLocaleString();
+            updateCalorieDashboard();
+        }
+
+        // Update IF Time Windows based on selection and start time
+        function updateIFSchedule() {
+            const protocol = document.getElementById('ifProtocol').value; // e.g., "16:8"
+            const startTimeStr = document.getElementById('eatingStartTime').value; // e.g., "12:00"
+
+            const [fastHours, eatHours] = protocol.split(':').map(Number);
+            fastingTotalSeconds = fastHours * 3600;
+
+            const [startH, startM] = startTimeStr.split(':').map(Number);
+
+            // Calculate Eating Window: startH:startM to (startH + eatHours):startM
+            const eatEndH = (startH + eatHours) % 24;
+            const formatTime = (h, m) => `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+
+            const eatingStartText = formatTime(startH, startM);
+            const eatingEndText = formatTime(eatEndH, startM);
+
+            document.getElementById('eatingWindowTime').innerText = `${eatingStartText} - ${eatingEndText} น.`;
+            document.getElementById('fastingWindowTime').innerText = `${eatingEndText} - ${eatingStartText} น.`;
+
+            if (!isFastingActive) {
+                fastingRemainingSeconds = fastingTotalSeconds;
+                updateTimerDisplay();
+            }
+        }
+
+        // Fasting Timer Logic
+        function toggleFasting() {
+            const btn = document.getElementById('fastingToggleBtn');
+            const badge = document.getElementById('fastingStatusBadge');
+
+            if (!isFastingActive) {
+                // Start Fasting
+                isFastingActive = true;
+                btn.innerHTML = '<i class="fa-solid fa-pause"></i> หยุดชั่วคราว Fasting';
+                btn.className = "w-full bg-amber-500 hover:bg-amber-600 text-white font-semibold py-3 rounded-2xl shadow-lg transition-all duration-200 active:scale-[0.99] flex items-center justify-center gap-2";
+                
+                badge.innerText = "🔥 กำลัง Fasting (อดอาหาร)";
+                badge.className = "inline-block px-3 py-1 bg-emerald-500/30 text-emerald-300 text-xs rounded-full font-medium mb-3 border border-emerald-500/30 pulse-ring";
+
+                timerInterval = setInterval(() => {
+                    if (fastingRemainingSeconds > 0) {
+                        fastingRemainingSeconds--;
+                        updateTimerDisplay();
+                    } else {
+                        clearInterval(timerInterval);
+                        isFastingActive = false;
+                        alert('🎉 ยินดีด้วยคุณ ณัฐนิช! ครบกำหนดเวลา Fasting แล้ว');
+                        resetFasting();
+                    }
+                }, 1000);
+            } else {
+                // Pause Fasting
+                clearInterval(timerInterval);
+                isFastingActive = false;
+                btn.innerHTML = '<i class="fa-solid fa-play"></i> ทำต่อ (Resume)';
+                btn.className = "w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-2xl shadow-lg transition-all duration-200 active:scale-[0.99] flex items-center justify-center gap-2";
+                
+                badge.innerText = "⏸️ หยุดเวลาชั่วคราว";
+                badge.className = "inline-block px-3 py-1 bg-amber-500/30 text-amber-300 text-xs rounded-full font-medium mb-3 border border-amber-500/30";
+            }
+        }
+
+        function resetFasting() {
+            clearInterval(timerInterval);
+            isFastingActive = false;
+            fastingRemainingSeconds = fastingTotalSeconds;
+            
+            const btn = document.getElementById('fastingToggleBtn');
+            const badge = document.getElementById('fastingStatusBadge');
+
+            btn.innerHTML = '<i class="fa-solid fa-play"></i> เริ่ม Fasting';
+            btn.className = "w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-2xl shadow-lg transition-all duration-200 active:scale-[0.99] flex items-center justify-center gap-2";
+            
+            badge.innerText = "พร้อมเริ่ม Fasting";
+            badge.className = "inline-block px-3 py-1 bg-purple-500/30 text-purple-300 text-xs rounded-full font-medium mb-3 border border-purple-500/30";
+
+            updateTimerDisplay();
+        }
+
+        function updateTimerDisplay() {
+            const hrs = Math.floor(fastingRemainingSeconds / 3600);
+            const mins = Math.floor((fastingRemainingSeconds % 3600) / 60);
+            const secs = fastingRemainingSeconds % 60;
+
+            const format = (num) => String(num).padStart(2, '0');
+            document.getElementById('timerDisplay').innerText = `${format(hrs)}:${format(mins)}:${format(secs)}`;
+
+            // Update Progress Bar
+            const elapsed = fastingTotalSeconds - fastingRemainingSeconds;
+            const progressPercent = (elapsed / fastingTotalSeconds) * 100;
+            document.getElementById('fastingProgressBar').style.width = `${progressPercent}%`;
+        }
+
+        // Add Calorie Item Function
+        function addFoodItem() {
+            const nameInput = document.getElementById('foodNameInput');
+            const calInput = document.getElementById('foodCalInput');
+
+            const name = nameInput.value.trim();
+            const cal = parseInt(calInput.value);
+
+            if (!name || isNaN(cal) || cal <= 0) {
+                alert('กรุณากรอกชื่ออาหารและแคลอรีให้ถูกต้อง');
+                return;
+            }
+
+            consumedCalories += cal;
+            updateCalorieDashboard();
+
+            // Append to log UI
+            const logContainer = document.getElementById('foodLogList');
+            const now = new Date();
+            const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+            const itemHtml = `
+                <div class="flex items-center justify-between p-2.5 bg-slate-50/80 rounded-xl text-xs border border-slate-100 animate-fade-in">
+                    <div class="flex items-center gap-2">
+                        <span class="text-slate-400">${timeStr}</span>
+                        <span class="font-medium text-slate-700">${name}</span>
+                    </div>
+                    <span class="font-bold text-slate-700">${cal} kcal</span>
+                </div>
+            `;
+            logContainer.insertAdjacentHTML('afterbegin', itemHtml);
+
+            // Reset Input Fields
+            nameInput.value = '';
+            calInput.value = '';
+        }
+
+        // Refresh Dashboard Numbers and Bars
+        function updateCalorieDashboard() {
+            const remaining = targetCalories - consumedCalories;
+
+            document.getElementById('dashboardEatenCal').innerText = consumedCalories.toLocaleString();
+            document.getElementById('dashboardRemainingCal').innerText = remaining > 0 ? remaining.toLocaleString() : '0';
+
+            const percent = Math.min(100, Math.round((consumedCalories / targetCalories) * 100));
+            document.getElementById('calProgressPercent').innerText = `${percent}%`;
+            document.getElementById('calProgressBar').style.width = `${percent}%`;
+
+            if (consumedCalories > targetCalories) {
+                document.getElementById('calProgressBar').className = "bg-gradient-to-r from-amber-500 to-rose-500 h-full transition-all duration-300";
+            } else {
+                document.getElementById('calProgressBar').className = "bg-gradient-to-r from-emerald-400 to-teal-500 h-full transition-all duration-300";
+            }
+        }
