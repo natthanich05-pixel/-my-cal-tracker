@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calorie Tracker ส่วนตัว</title>
+  <style>
+    * { box-sizing: border-box; font-family: 'Sukhumvit Set', 'Segoe UI', Tahoma, sans-serif; }
+    body { background-color: #f4f6f9; margin: 0; padding: 20px; color: #333; }
+    .container { max-width: 500px; margin: 0 auto; background: white; padding: 24px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    h2 { text-align: center; color: #2c3e50; margin-top: 0; }
+    .card { background: #f8f9fa; padding: 16px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #e9ecef; }
+    label { font-size: 14px; font-weight: bold; display: block; margin-bottom: 6px; color: #495057; }
+    input, select { width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid #ced4da; border-radius: 8px; font-size: 14px; }
+    button { width: 100%; padding: 12px; border: none; border-radius: 8px; background-color: #27ae60; color: white; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+    button:hover { background-color: #219150; }
+    .btn-danger { background-color: #e74c3c; margin-top: 10px; }
+    .btn-danger:hover { background-color: #c0392b; }
+    .stat-box { display: flex; justify-content: space-between; text-align: center; margin-top: 15px; }
+    .stat-item { flex: 1; padding: 10px; background: #fff; border-radius: 8px; margin: 0 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .stat-number { font-size: 20px; font-weight: bold; color: #2c3e50; }
+    .food-list { list-style: none; padding: 0; margin-top: 15px; }
+    .food-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; }
+    .del-btn { background: none; border: none; color: #e74c3c; cursor: pointer; font-weight: bold; width: auto; padding: 0 8px; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>🥗 Calorie Tracker</h2>
+
+  <!-- ส่วนคำนวณ TDEE -->
+  <div class="card">
+    <label>เพศ</label>
+    <select id="gender"><option value="male">ชาย</option><option value="female">หญิง</option></select>
+    
+    <label>อายุ (ปี)</label>
+    <input type="number" id="age" value="25">
+    
+    <label>ส่วนสูง (ซม.)</label>
+    <input type="number" id="height" value="170">
+    
+    <label>น้ำหนัก (กก.)</label>
+    <input type="number" id="weight" value="65">
+    
+    <label>การออกกำลังกาย</label>
+    <select id="activity">
+      <option value="1.2">นั่่งทำงานอยู่กับที่ / ไม่ออกกำลังกาย</option>
+      <option value="1.375">ออกกำลังกายเบาๆ 1-3 วัน/สัปดาห์</option>
+      <option value="1.55">ออกกำลังกายปานกลาง 3-5 วัน/สัปดาห์</option>
+      <option value="1.725">ออกกำลังกายหนัก 6-7 วัน/สัปดาห์</option>
+    </select>
+    
+    <button onclick="calculateTDEE()">ตั้งค่าเป้าหมายแคลอรี</button>
+  </div>
+
+  <!-- แผงสรุปแคลอรี -->
+  <div class="card">
+    <div class="stat-box">
+      <div class="stat-item"><div>เป้าหมาย</div><div class="stat-number" id="targetCal">0</div></div>
+      <div class="stat-item"><div>ทานไปแล้ว</div><div class="stat-number" id="consumedCal">0</div></div>
+      <div class="stat-item"><div>คงเหลือ</div><div class="stat-number" id="remainingCal">0</div></div>
+    </div>
+  </div>
+
+  <!-- บันทึกอาหาร -->
+  <div class="card">
+    <label>ชื่อเมนูอาหาร</label>
+    <input type="text" id="foodName" placeholder="เช่น ข้าวมันไก่">
+    
+    <label>แคลอรี (kcal)</label>
+    <input type="number" id="foodCal" placeholder="เช่น 590">
+    
+    <button onclick="addFood()">+ บันทึกมื้ออาหาร</button>
+  </div>
+
+  <!-- รายการอาหาร -->
+  <h3>มื้ออาหารวันนี้</h3>
+  <ul class="food-list" id="foodList"></ul>
+
+  <button class="btn-danger" onclick="resetDay()">ล้างข้อมูลวันใหม่</button>
+</div>
+
+<script>
+  let targetTDEE = parseInt(localStorage.getItem('targetTDEE')) || 2000;
+  let foods = JSON.parse(localStorage.getItem('todayFoods')) || [];
+
+  function updateUI() {
+    document.getElementById('targetCal').innerText = targetTDEE;
+    let totalConsumed = foods.reduce((sum, f) => sum + f.cal, 0);
+    document.getElementById('consumedCal').innerText = totalConsumed;
+    
+    let remaining = targetTDEE - totalConsumed;
+    let remElem = document.getElementById('remainingCal');
+    remElem.innerText = remaining;
+    remElem.style.color = remaining < 0 ? '#e74c3c' : '#27ae60';
+
+    let listElem = document.getElementById('foodList');
+    listElem.innerHTML = '';
+    foods.forEach((f, idx) => {
+      listElem.innerHTML += `
+        <li class="food-item">
+          <span>${f.name} (${f.cal} kcal)</span>
+          <button class="del-btn" onclick="removeFood(${idx})">✕</button>
+        </li>`;
+    });
+
+    localStorage.setItem('todayFoods', JSON.stringify(foods));
+    localStorage.setItem('targetTDEE', targetTDEE);
+  }
+
+  function calculateTDEE() {
+    let gender = document.getElementById('gender').value;
+    let age = parseFloat(document.getElementById('age').value);
+    let h = parseFloat(document.getElementById('height').value);
+    let w = parseFloat(document.getElementById('weight').value);
+    let act = parseFloat(document.getElementById('activity').value);
+
+    let bmr = (gender === 'male') 
+      ? (10 * w) + (6.25 * h) - (5 * age) + 5 
+      : (10 * w) + (6.25 * h) - (5 * age) - 161;
+
+    targetTDEE = Math.round(bmr * act);
+    updateUI();
+  }
+
+  function addFood() {
+    let name = document.getElementById('foodName').value.trim();
+    let cal = parseInt(document.getElementById('foodCal').value);
+
+    if (name && cal) {
+      foods.push({ name: name, cal: cal });
+      document.getElementById('foodName').value = '';
+      document.getElementById('foodCal').value = '';
+      updateUI();
+    }
+  }
+
+  function removeFood(index) {
+    foods.splice(index, 1);
+    updateUI();
+  }
+
+  function resetDay() {
+    if (confirm('ต้องการล้างรายการอาหารของวันนี้หรือไม่?')) {
+      foods = [];
+      updateUI();
+    }
+  }
+
+  updateUI();
+</script>
+</body>
+</html>
