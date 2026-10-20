@@ -3,110 +3,220 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Calorie Tracker ส่วนตัว</title>
+  <title>Pro Calorie & IF Tracker by Dream</title>
   <style>
-    * { box-sizing: border-box; font-family: 'Sukhumvit Set', 'Segoe UI', Tahoma, sans-serif; }
-    body { background-color: #f4f6f9; margin: 0; padding: 20px; color: #333; }
-    .container { max-width: 500px; margin: 0 auto; background: white; padding: 24px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-    h2 { text-align: center; color: #2c3e50; margin-top: 0; }
-    .card { background: #f8f9fa; padding: 16px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #e9ecef; }
-    label { font-size: 14px; font-weight: bold; display: block; margin-bottom: 6px; color: #495057; }
-    input, select { width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid #ced4da; border-radius: 8px; font-size: 14px; }
-    button { width: 100%; padding: 12px; border: none; border-radius: 8px; background-color: #27ae60; color: white; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-    button:hover { background-color: #219150; }
-    .btn-danger { background-color: #e74c3c; margin-top: 10px; }
-    .btn-danger:hover { background-color: #c0392b; }
-    .stat-box { display: flex; justify-content: space-between; text-align: center; margin-top: 15px; }
-    .stat-item { flex: 1; padding: 10px; background: #fff; border-radius: 8px; margin: 0 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-    .stat-number { font-size: 20px; font-weight: bold; color: #2c3e50; }
-    .food-list { list-style: none; padding: 0; margin-top: 15px; }
-    .food-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; }
-    .del-btn { background: none; border: none; color: #e74c3c; cursor: pointer; font-weight: bold; width: auto; padding: 0 8px; }
+    * { box-sizing: border-box; font-family: 'Sukhumvit Set', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: #f0f4f8; margin: 0; padding: 16px; color: #2d3748; }
+    .container { max-width: 500px; margin: 0 auto; background: #ffffff; padding: 20px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+    h2, h3 { text-align: center; color: #1a202c; margin-top: 0; }
+    .card { background: #f8fafc; padding: 16px; border-radius: 14px; margin-bottom: 16px; border: 1px solid #e2e8f0; }
+    label { font-size: 13px; font-weight: 700; display: block; margin-bottom: 6px; color: #4a5568; }
+    input, select { width: 100%; padding: 10px 12px; margin-bottom: 12px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 14px; background: #fff; }
+    button { width: 100%; padding: 12px; border: none; border-radius: 10px; background-color: #10b981; color: white; font-size: 15px; font-weight: bold; cursor: pointer; transition: all 0.2s; }
+    button:hover { background-color: #059669; }
+    .btn-stop { background-color: #ef4444; }
+    .btn-stop:hover { background-color: #dc2626; }
+    .btn-danger { background-color: #f43f5e; margin-top: 10px; }
+    
+    /* สรุปแคลอรี & IF */
+    .stat-box { display: flex; justify-content: space-between; text-align: center; gap: 8px; margin-top: 10px; }
+    .stat-item { flex: 1; padding: 10px 4px; background: #fff; border-radius: 10px; border: 1px solid #edf2f7; }
+    .stat-number { font-size: 18px; font-weight: 800; color: #1e293b; margin-top: 4px; }
+    .macro-box { display: flex; justify-content: space-around; background: #e0f2fe; padding: 10px; border-radius: 10px; margin-top: 10px; font-size: 12px; font-weight: bold; color: #0369a1; }
+    
+    /* IF Timer Style */
+    .timer-display { font-size: 28px; font-weight: 800; text-align: center; color: #0f172a; margin: 10px 0; font-family: monospace; }
+    .progress-bar-bg { background: #e2e8f0; height: 10px; border-radius: 5px; overflow: hidden; margin-bottom: 12px; }
+    .progress-bar-fill { background: #6366f1; height: 100%; width: 0%; transition: width 0.5s; }
+    
+    /* รายการอาหาร */
+    .food-list { list-style: none; padding: 0; margin-top: 10px; }
+    .food-item { display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid #f1f5f9; background: #fff; border-radius: 8px; margin-bottom: 8px; }
+    .food-img { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; margin-right: 10px; border: 1px solid #e2e8f0; }
+    .food-info { flex: 1; font-size: 13px; }
+    .del-btn { background: none; border: none; color: #ef4444; cursor: pointer; font-weight: bold; font-size: 16px; padding: 4px 8px; width: auto; }
+    .search-results { max-height: 150px; overflow-y: auto; background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; margin-top: -10px; margin-bottom: 12px; display: none; }
+    .search-item { padding: 8px 12px; cursor: pointer; font-size: 13px; border-bottom: 1px solid #f1f5f9; }
+    .search-item:hover { background: #f1f5f9; }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <h2>🥗 Calorie Tracker</h2>
+  <h2>🥗 Pro Calorie & IF Tracker</h2>
 
-  <!-- ส่วนคำนวณ TDEE -->
+  <!-- 1. ส่วนตั้งเป้าหมาย BMR/TDEE -->
   <div class="card">
-    <label>เพศ</label>
-    <select id="gender"><option value="male">ชาย</option><option value="female">หญิง</option></select>
-    
-    <label>อายุ (ปี)</label>
-    <input type="number" id="age" value="25">
-    
-    <label>ส่วนสูง (ซม.)</label>
-    <input type="number" id="height" value="170">
-    
-    <label>น้ำหนัก (กก.)</label>
-    <input type="number" id="weight" value="65">
-    
-    <label>การออกกำลังกาย</label>
+    <label>🎯 คำนวณเป้าหมายแคลอรีประจำวัน</label>
+    <div style="display: flex; gap: 8px;">
+      <select id="gender"><option value="male">ชาย</option><option value="female">หญิง</option></select>
+      <input type="number" id="age" placeholder="อายุ" value="25">
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <input type="number" id="height" placeholder="ส่วนสูง (ซม.)" value="170">
+      <input type="number" id="weight" placeholder="น้ำหนัก (กก.)" value="65">
+    </div>
     <select id="activity">
-      <option value="1.2">นั่่งทำงานอยู่กับที่ / ไม่ออกกำลังกาย</option>
+      <option value="1.2">นั่งทำงานอยู่กับที่ / ไม่ออกกำลังกาย</option>
       <option value="1.375">ออกกำลังกายเบาๆ 1-3 วัน/สัปดาห์</option>
       <option value="1.55">ออกกำลังกายปานกลาง 3-5 วัน/สัปดาห์</option>
       <option value="1.725">ออกกำลังกายหนัก 6-7 วัน/สัปดาห์</option>
     </select>
-    
-    <button onclick="calculateTDEE()">ตั้งค่าเป้าหมายแคลอรี</button>
+    <button onclick="calculateTDEE()">บันทึกเป้าหมาย</button>
   </div>
 
-  <!-- แผงสรุปแคลอรี -->
+  <!-- 2. ส่วนจับเวลา Fasting (IF) -->
+  <div class="card" style="background: #faf5ff; border-color: #e9d5ff;">
+    <label style="color: #6b21a8;">⏱️ ตัวช่วยทำ Fasting (IF)</label>
+    <select id="ifPlan" onchange="changeIFPlan()">
+      <option value="16">IF 16/8 (อด 16 ชม. / ทาน 8 ชม.)</option>
+      <option value="18">IF 18/6 (อด 18 ชม. / ทาน 6 ชม.)</option>
+      <option value="20">IF 20/4 (อด 20 ชม. / ทาน 4 ชม.)</option>
+      <option value="14">IF 14/10 (อด 14 ชม. / ทาน 10 ชม.)</option>
+    </select>
+    <div class="timer-display" id="ifTimerDisplay">16:00:00</div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="ifProgress"></div></div>
+    <button id="ifBtn" style="background-color: #8b5cf6;" onclick="toggleIF()">เริ่ม Fasting</button>
+  </div>
+
+  <!-- 3. แผงสรุปแคลอรี & สารอาหาร -->
   <div class="card">
     <div class="stat-box">
       <div class="stat-item"><div>เป้าหมาย</div><div class="stat-number" id="targetCal">0</div></div>
-      <div class="stat-item"><div>ทานไปแล้ว</div><div class="stat-number" id="consumedCal">0</div></div>
+      <div class="stat-item"><div>ทานแล้ว</div><div class="stat-number" id="consumedCal">0</div></div>
       <div class="stat-item"><div>คงเหลือ</div><div class="stat-number" id="remainingCal">0</div></div>
+    </div>
+    <div class="macro-box">
+      <div>P (โปรตีน): <span id="totalP">0</span>g</div>
+      <div>C (คาร์บ): <span id="totalC">0</span>g</div>
+      <div>F (ไขมัน): <span id="totalF">0</span>g</div>
     </div>
   </div>
 
-  <!-- บันทึกอาหาร -->
+  <!-- 4. บันทึกอาหารและรูปถ่าย -->
   <div class="card">
+    <label>🔍 ค้นหาเมนูอาหาร (อ้างอิงมาตรฐานโภชนาการ)</label>
+    <input type="text" id="foodSearch" placeholder="พิมพ์ชื่ออาหาร เช่น กะเพรา, ข้าวมันไก่..." oninput="searchFood()">
+    <div class="search-results" id="searchResults"></div>
+
     <label>ชื่อเมนูอาหาร</label>
     <input type="text" id="foodName" placeholder="เช่น ข้าวมันไก่">
     
-    <label>แคลอรี (kcal)</label>
-    <input type="number" id="foodCal" placeholder="เช่น 590">
-    
+    <div style="display: flex; gap: 8px;">
+      <input type="number" id="foodCal" placeholder="แคลอรี (kcal)">
+      <input type="number" id="foodP" placeholder="โปรตีน (g)">
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <input type="number" id="foodC" placeholder="คาร์บ (g)">
+      <input type="number" id="foodF" placeholder="ไขมัน (g)">
+    </div>
+
+    <label>📸 แนบรูปภาพมื้ออาหาร (ถ้ามี)</label>
+    <input type="file" id="foodImage" accept="image/*">
+
     <button onclick="addFood()">+ บันทึกมื้ออาหาร</button>
   </div>
 
-  <!-- รายการอาหาร -->
+  <!-- 5. รายการอาหารวันนี้ -->
   <h3>มื้ออาหารวันนี้</h3>
   <ul class="food-list" id="foodList"></ul>
 
-  <button class="btn-danger" onclick="resetDay()">ล้างข้อมูลวันใหม่</button>
+  <button class="btn-danger" onclick="resetDay()">ล้างข้อมูลเริ่มวันใหม่</button>
 </div>
 
 <script>
+  // ฐานข้อมูลอาหารอ้างอิงมาตรฐานกรมอนามัย / USDA
+  const foodDatabase = [
+    { name: "ข้าวมันไก่", cal: 596, p: 21, c: 67, f: 26 },
+    { name: "ข้าวผัดหมูใส่ไข่", cal: 557, p: 18, c: 68, f: 22 },
+    { name: "กะเพราไก่ไข่ดาว", cal: 630, p: 26, c: 55, f: 33 },
+    { name: "ข้าวไข่เจียวหมูสับ", cal: 480, p: 15, c: 45, f: 27 },
+    { name: "ส้มตำไทย + ไก่ย่าง (1 สะโพก)", cal: 410, p: 28, c: 25, f: 22 },
+    { name: "ก๋วยเตี๋ยวเรือน้ำตกหมู", cal: 350, p: 16, c: 40, f: 12 },
+    { name: "ผัดไทยกุ้งสด", cal: 580, p: 20, c: 65, f: 26 },
+    { name: "สลัดอกไก่ย่าง (น้ำใส)", cal: 240, p: 30, c: 12, f: 7 },
+    { name: "ต้มยำกุ้งน้ำใส", cal: 120, p: 18, c: 6, f: 2 },
+    { name: "ชาไทยเย็น (สูตรปกติ)", cal: 230, p: 3, c: 38, f: 7 },
+    { name: "อเมริกาโน่เย็น (ไม่หวาน)", cal: 15, p: 0, c: 3, f: 0 },
+    { name: "ไข่ต้ม (1 ฟอง)", cal: 75, p: 7, c: 0.6, f: 5 },
+    { name: "อกไก่ต้ม (100g)", cal: 165, p: 31, c: 0, f: 3.6 }
+  ];
+
   let targetTDEE = parseInt(localStorage.getItem('targetTDEE')) || 2000;
   let foods = JSON.parse(localStorage.getItem('todayFoods')) || [];
+  
+  // IF State
+  let ifStartTime = localStorage.getItem('ifStartTime') ? parseInt(localStorage.getItem('ifStartTime')) : null;
+  let ifHours = parseInt(localStorage.getItem('ifHours')) || 16;
+  let ifTimerInterval = null;
 
   function updateUI() {
     document.getElementById('targetCal').innerText = targetTDEE;
-    let totalConsumed = foods.reduce((sum, f) => sum + f.cal, 0);
-    document.getElementById('consumedCal').innerText = totalConsumed;
-    
-    let remaining = targetTDEE - totalConsumed;
+    let totalCal = 0, totalP = 0, totalC = 0, totalF = 0;
+
+    foods.forEach(f => {
+      totalCal += f.cal || 0;
+      totalP += f.p || 0;
+      totalC += f.c || 0;
+      totalF += f.f || 0;
+    });
+
+    document.getElementById('consumedCal').innerText = totalCal;
+    document.getElementById('totalP').innerText = Math.round(totalP);
+    document.getElementById('totalC').innerText = Math.round(totalC);
+    document.getElementById('totalF').innerText = Math.round(totalF);
+
+    let remaining = targetTDEE - totalCal;
     let remElem = document.getElementById('remainingCal');
     remElem.innerText = remaining;
-    remElem.style.color = remaining < 0 ? '#e74c3c' : '#27ae60';
+    remElem.style.color = remaining < 0 ? '#ef4444' : '#10b981';
 
     let listElem = document.getElementById('foodList');
     listElem.innerHTML = '';
     foods.forEach((f, idx) => {
+      let imgHtml = f.img ? `<img src="${f.img}" class="food-img">` : `<div class="food-img" style="display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#94a3b8;">🍽️</div>`;
       listElem.innerHTML += `
         <li class="food-item">
-          <span>${f.name} (${f.cal} kcal)</span>
+          <div style="display:flex;align-items:center;">
+            ${imgHtml}
+            <div class="food-info">
+              <strong>${f.name}</strong><br>
+              <span style="color:#64748b;">${f.cal} kcal | P:${f.p}g C:${f.c}g F:${f.f}g</span>
+            </div>
+          </div>
           <button class="del-btn" onclick="removeFood(${idx})">✕</button>
         </li>`;
     });
 
     localStorage.setItem('todayFoods', JSON.stringify(foods));
     localStorage.setItem('targetTDEE', targetTDEE);
+  }
+
+  function searchFood() {
+    let query = document.getElementById('foodSearch').value.toLowerCase().trim();
+    let resBox = document.getElementById('searchResults');
+    if (!query) { resBox.style.display = 'none'; return; }
+
+    let matches = foodDatabase.filter(f => f.name.toLowerCase().includes(query));
+    if (matches.length > 0) {
+      resBox.innerHTML = '';
+      matches.forEach(f => {
+        resBox.innerHTML += `<div class="search-item" onclick='selectFood(${JSON.stringify(f)})'>${f.name} (${f.cal} kcal)</div>`;
+      });
+      resBox.style.display = 'block';
+    } else {
+      resBox.style.display = 'none';
+    }
+  }
+
+  function selectFood(item) {
+    document.getElementById('foodName').value = item.name;
+    document.getElementById('foodCal').value = item.cal;
+    document.getElementById('foodP').value = item.p;
+    document.getElementById('foodC').value = item.c;
+    document.getElementById('foodF').value = item.f;
+    document.getElementById('searchResults').style.display = 'none';
+    document.getElementById('foodSearch').value = '';
   }
 
   function calculateTDEE() {
@@ -116,38 +226,122 @@
     let w = parseFloat(document.getElementById('weight').value);
     let act = parseFloat(document.getElementById('activity').value);
 
-    let bmr = (gender === 'male') 
-      ? (10 * w) + (6.25 * h) - (5 * age) + 5 
-      : (10 * w) + (6.25 * h) - (5 * age) - 161;
-
+    let bmr = (gender === 'male') ? (10 * w) + (6.25 * h) - (5 * age) + 5 : (10 * w) + (6.25 * h) - (5 * age) - 161;
     targetTDEE = Math.round(bmr * act);
     updateUI();
+    alert('อัปเดตเป้าหมายเรียบร้อยแล้ว!');
   }
 
   function addFood() {
     let name = document.getElementById('foodName').value.trim();
-    let cal = parseInt(document.getElementById('foodCal').value);
+    let cal = parseInt(document.getElementById('foodCal').value) || 0;
+    let p = parseFloat(document.getElementById('foodP').value) || 0;
+    let c = parseFloat(document.getElementById('foodC').value) || 0;
+    let f = parseFloat(document.getElementById('foodF').value) || 0;
+    let imgInput = document.getElementById('foodImage');
 
-    if (name && cal) {
-      foods.push({ name: name, cal: cal });
-      document.getElementById('foodName').value = '';
-      document.getElementById('foodCal').value = '';
+    if (!name || cal <= 0) {
+      alert('กรุณากรอกชื่ออาหารและแคลอรี');
+      return;
+    }
+
+    if (imgInput.files && imgInput.files[0]) {
+      let reader = new FileReader();
+      reader.onload = function(e) {
+        foods.push({ name, cal, p, c, f, img: e.target.result });
+        clearFoodForm();
+        updateUI();
+      };
+      reader.readAsDataURL(imgInput.files[0]);
+    } else {
+      foods.push({ name, cal, p, c, f, img: null });
+      clearFoodForm();
       updateUI();
     }
   }
 
-  function removeFood(index) {
-    foods.splice(index, 1);
+  function clearFoodForm() {
+    document.getElementById('foodName').value = '';
+    document.getElementById('foodCal').value = '';
+    document.getElementById('foodP').value = '';
+    document.getElementById('foodC').value = '';
+    document.getElementById('foodF').value = '';
+    document.getElementById('foodImage').value = '';
+  }
+
+  function removeFood(idx) {
+    foods.splice(idx, 1);
     updateUI();
   }
 
   function resetDay() {
-    if (confirm('ต้องการล้างรายการอาหารของวันนี้หรือไม่?')) {
+    if (confirm('ต้องการล้างข้อมูลบันทึกมื้ออาหารของวันนี้หรือไม่?')) {
       foods = [];
       updateUI();
     }
   }
 
+  /* Fasting (IF) Logic */
+  function changeIFPlan() {
+    ifHours = parseInt(document.getElementById('ifPlan').value);
+    localStorage.setItem('ifHours', ifHours);
+    updateIFTimer();
+  }
+
+  function toggleIF() {
+    if (ifStartTime) {
+      if (confirm('ต้องการยกเลิก/จบการ Fasting รอบนี้หรือไม่?')) {
+        ifStartTime = null;
+        localStorage.removeItem('ifStartTime');
+        document.getElementById('ifBtn').innerText = 'เริ่ม Fasting';
+        document.getElementById('ifBtn').classList.remove('btn-stop');
+      }
+    } else {
+      ifStartTime = Date.now();
+      localStorage.setItem('ifStartTime', ifStartTime);
+      document.getElementById('ifBtn').innerText = 'จบ Fasting';
+      document.getElementById('ifBtn').classList.add('btn-stop');
+    }
+    updateIFTimer();
+  }
+
+  function updateIFTimer() {
+    if (!ifStartTime) {
+      document.getElementById('ifTimerDisplay').innerText = `${ifHours}:00:00`;
+      document.getElementById('ifProgress').style.width = '0%';
+      return;
+    }
+
+    let targetTime = ifStartTime + (ifHours * 3600 * 1000);
+    let now = Date.now();
+    let diff = targetTime - now;
+
+    if (diff <= 0) {
+      document.getElementById('ifTimerDisplay').innerText = "สำเสร็จ Fasting 🎉";
+      document.getElementById('ifProgress').style.width = '100%';
+      return;
+    }
+
+    let hrs = Math.floor(diff / (1000 * 60 * 60));
+    let mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    let secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+    document.getElementById('ifTimerDisplay').innerText = 
+      `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
+    let elapsed = now - ifStartTime;
+    let total = ifHours * 3600 * 1000;
+    let pct = Math.min(100, (elapsed / total) * 100);
+    document.getElementById('ifProgress').style.width = pct + '%';
+  }
+
+  // Initialize
+  document.getElementById('ifPlan').value = ifHours;
+  if (ifStartTime) {
+    document.getElementById('ifBtn').innerText = 'จบ Fasting';
+    document.getElementById('ifBtn').classList.add('btn-stop');
+  }
+  setInterval(updateIFTimer, 1000);
   updateUI();
 </script>
 </body>
