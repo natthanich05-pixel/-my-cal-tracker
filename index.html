@@ -62,16 +62,29 @@
     <!-- Main Container -->
     <main class="max-w-md mx-auto px-4 pt-4 space-y-5">
 
-        <!-- Welcome Banner -->
+        <!-- Welcome & Live Clock Banner -->
         <div class="rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-purple-900 p-5 text-white shadow-lg relative overflow-hidden">
-            <div class="relative z-10">
-                <span class="inline-block px-2.5 py-0.5 bg-emerald-500/20 text-emerald-300 rounded-full text-[11px] font-medium mb-1 border border-emerald-500/30">
-                    ✨ บันทึกสุขภาพส่วนบุคคล
-                </span>
-                <h2 class="text-lg font-bold">สวัสดีครับ คุณ ณัฐนิช 👋</h2>
-                <p class="text-xs text-slate-300 mt-1 leading-relaxed">
-                    ค้นหาแคลอรีอาหาร คำนวณช่วงเวลา IF และติดตามเป้าหมายลดน้ำหนักอย่างปลอดภัยตามหลักแพทย์
-                </p>
+            <div class="relative z-10 flex justify-between items-start">
+                <div>
+                    <span class="inline-block px-2.5 py-0.5 bg-emerald-500/20 text-emerald-300 rounded-full text-[11px] font-medium mb-1 border border-emerald-500/30">
+                        ✨ บันทึกสุขภาพส่วนบุคคล
+                    </span>
+                    <h2 class="text-lg font-bold">สวัสดีครับ คุณ ณัฐนิช 👋</h2>
+                    <p class="text-xs text-slate-300 mt-1 leading-relaxed">
+                        ค้นหาแคลอรีอาหาร คำนวณช่วงเวลา IF และติดตามเป้าหมายลดน้ำหนัก
+                    </p>
+                </div>
+            </div>
+            <!-- Live Clock Display -->
+            <div class="mt-3 pt-3 border-t border-white/10 flex justify-between items-center text-xs text-slate-300">
+                <div class="flex items-center gap-1.5">
+                    <i class="fa-regular fa-clock text-emerald-400"></i>
+                    <span id="liveTime" class="font-mono text-sm font-bold text-emerald-300">00:00:00</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                    <i class="fa-regular fa-calendar text-purple-400"></i>
+                    <span id="liveDate">กำลังโหลด...</span>
+                </div>
             </div>
         </div>
 
@@ -250,9 +263,9 @@
         <section class="glass-card rounded-3xl p-4 border border-white">
             <div class="flex items-center justify-between mb-3">
                 <h3 class="font-bold text-slate-800 text-sm flex items-center gap-1.5">
-                    <span>📊</span> แดชบอร์ดสรุปแคลอรีวันนี้
+                    <span>📊</span> แดชบอร์ดสรุปแคลอรี
                 </h3>
-                <span class="text-[11px] text-slate-400" id="todayDate">21 ต.ค. 2569</span>
+                <input type="date" id="selectedDatePicker" onchange="changeLogDate()" class="bg-slate-100 border border-slate-200 text-[11px] rounded-lg px-2 py-1 font-medium text-slate-700">
             </div>
 
             <!-- Cards Grid -->
@@ -264,12 +277,12 @@
                 </div>
                 <div class="bg-emerald-50 p-2.5 rounded-2xl border border-emerald-100">
                     <span class="text-[10px] text-emerald-600 block">ทานแล้ว</span>
-                    <span class="text-base font-bold text-emerald-700" id="dashboardEatenCal">850</span>
+                    <span class="text-base font-bold text-emerald-700" id="dashboardEatenCal">0</span>
                     <span class="text-[9px] text-emerald-500 block">แคล</span>
                 </div>
                 <div class="bg-indigo-50 p-2.5 rounded-2xl border border-indigo-100">
                     <span class="text-[10px] text-indigo-600 block">คงเหลือ</span>
-                    <span class="text-base font-bold text-indigo-700" id="dashboardRemainingCal">437</span>
+                    <span class="text-base font-bold text-indigo-700" id="dashboardRemainingCal">1,287</span>
                     <span class="text-[9px] text-indigo-500 block">แคล</span>
                 </div>
             </div>
@@ -278,10 +291,10 @@
             <div class="mb-4">
                 <div class="flex justify-between text-[11px] mb-1 font-medium">
                     <span class="text-slate-600">ความคืบหน้าการกิน</span>
-                    <span class="text-emerald-600 font-bold" id="calProgressPercent">66%</span>
+                    <span class="text-emerald-600 font-bold" id="calProgressPercent">0%</span>
                 </div>
                 <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                    <div id="calProgressBar" class="bg-emerald-500 h-full w-[66%] transition-all duration-300"></div>
+                    <div id="calProgressBar" class="bg-emerald-500 h-full w-[0%] transition-all duration-300"></div>
                 </div>
             </div>
 
@@ -320,21 +333,16 @@
             </div>
 
             <!-- Food Log List -->
-            <div class="mt-4 space-y-1.5" id="foodLogList">
-                <div class="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl text-xs">
-                    <div class="flex items-center gap-2">
-                        <span class="text-slate-400 text-[10px]">08:30</span>
-                        <span class="font-medium text-slate-700">อกไก่ต้ม + ไข่ต้ม 2 ฟอง</span>
-                    </div>
-                    <span class="font-bold text-slate-700">350 kcal</span>
-                </div>
-                <div class="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl text-xs">
-                    <div class="flex items-center gap-2">
-                        <span class="text-slate-400 text-[10px]">12:15</span>
-                        <span class="font-medium text-slate-700">เกาเหลาหมูพิเศษ (ไม่กระเทียมเจียว)</span>
-                    </div>
-                    <span class="font-bold text-slate-700">500 kcal</span>
-                </div>
+            <div class="mt-4 space-y-1.5" id="foodLogList"></div>
+
+            <!-- Clear Buttons -->
+            <div class="mt-4 pt-3 border-t border-slate-100 grid grid-cols-2 gap-2">
+                <button onclick="clearTodayData()" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200/60 font-semibold py-2 rounded-xl text-[11px] transition flex items-center justify-center gap-1">
+                    <i class="fa-solid fa-broom"></i> ล้างรายการวันนี้
+                </button>
+                <button onclick="clearAllData()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold py-2 rounded-xl text-[11px] transition flex items-center justify-center gap-1">
+                    <i class="fa-solid fa-trash-can"></i> ล้างข้อมูลทั้งหมด
+                </button>
             </div>
         </section>
 
@@ -375,19 +383,23 @@
             { name: "กล้วยหอม (1 ลูก)", cal: 120, cat: "ผลไม้" }
         ];
 
-        let targetCalories = 1287;
-        let consumedCalories = 850;
-        let isFastingActive = false;
-        let timerInterval = null;
-        let fastingTotalSeconds = 16 * 3600;
-        let fastingRemainingSeconds = fastingTotalSeconds;
+        let currentDateKey = new Date().toISOString().split('T')[0];
+        let appState = JSON.parse(localStorage.getItem('natnichProTracker')) || {
+            targetCal: 1287,
+            foodLogs: {},
+            ifState: { active: false, startTime: null, durationSec: 16 * 3600 }
+        };
 
         window.onload = function() {
-            const today = new Date().toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
-            document.getElementById('todayDate').innerText = today;
+            document.getElementById('selectedDatePicker').value = currentDateKey;
+
+            // Start Live Clock
+            setInterval(updateLiveClock, 1000);
+            updateLiveClock();
 
             calculateCalories();
             updateIFSchedule();
+            renderFoodLogs();
 
             document.addEventListener('click', function(e) {
                 const dropdown = document.getElementById('foodDropdown');
@@ -397,6 +409,23 @@
                 }
             });
         };
+
+        function updateLiveClock() {
+            const now = new Date();
+            document.getElementById('liveTime').innerText = now.toTimeString().split(' ')[0];
+            const options = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' };
+            document.getElementById('liveDate').innerText = now.toLocaleDateString('th-TH', options);
+        }
+
+        function saveState() {
+            localStorage.setItem('natnichProTracker', JSON.stringify(appState));
+            updateCalorieDashboard();
+        }
+
+        function changeLogDate() {
+            currentDateKey = document.getElementById('selectedDatePicker').value;
+            renderFoodLogs();
+        }
 
         // Food Autocomplete Search
         function onFoodSearchInput() {
@@ -445,27 +474,70 @@
                 return;
             }
 
-            consumedCalories += cal;
-            updateCalorieDashboard();
+            if (!appState.foodLogs[currentDateKey]) {
+                appState.foodLogs[currentDateKey] = [];
+            }
 
-            const logContainer = document.getElementById('foodLogList');
             const now = new Date();
             const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
-            const itemHtml = `
-                <div class="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl text-xs">
-                    <div class="flex items-center gap-2">
-                        <span class="text-slate-400 text-[10px]">${timeStr}</span>
-                        <span class="font-medium text-slate-700">${name}</span>
-                    </div>
-                    <span class="font-bold text-slate-700">${cal} kcal</span>
-                </div>
-            `;
-            logContainer.insertAdjacentHTML('afterbegin', itemHtml);
+            appState.foodLogs[currentDateKey].unshift({ id: Date.now(), name, cal, time: timeStr });
 
             nameInput.value = '';
             calInput.value = '';
             document.getElementById('foodDropdown').classList.add('hidden');
+            
+            saveState();
+            renderFoodLogs();
+        }
+
+        function deleteFoodItem(id) {
+            if (appState.foodLogs[currentDateKey]) {
+                appState.foodLogs[currentDateKey] = appState.foodLogs[currentDateKey].filter(item => item.id !== id);
+                saveState();
+                renderFoodLogs();
+            }
+        }
+
+        function clearTodayData() {
+            if (confirm('คุณต้องการล้างรายการอาหารของวันนี้ทั้งหมดใช่หรือไม่?')) {
+                appState.foodLogs[currentDateKey] = [];
+                saveState();
+                renderFoodLogs();
+            }
+        }
+
+        function clearAllData() {
+            if (confirm('คุณต้องการล้างข้อมูลและประวัติทั้งหมดเพื่อตั้งค่าใหม่ใช่หรือไม่?')) {
+                localStorage.removeItem('natnichProTracker');
+                location.reload();
+            }
+        }
+
+        function renderFoodLogs() {
+            const listContainer = document.getElementById('foodLogList');
+            const logs = appState.foodLogs[currentDateKey] || [];
+
+            if (logs.length === 0) {
+                listContainer.innerHTML = `<div class="p-3 text-center text-xs text-slate-400 bg-slate-50 rounded-xl">ยังไม่มีรายการอาหารสำหรับวันนี้</div>`;
+            } else {
+                listContainer.innerHTML = logs.map(item => `
+                    <div class="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl text-xs">
+                        <div class="flex items-center gap-2">
+                            <span class="text-slate-400 text-[10px]">${item.time}</span>
+                            <span class="font-medium text-slate-700">${item.name}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-slate-700">${item.cal} kcal</span>
+                            <button onclick="deleteFoodItem(${item.id})" class="text-rose-500 hover:text-rose-700 px-1">
+                                <i class="fa-solid fa-trash-can text-[11px]"></i>
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            updateCalorieDashboard();
         }
 
         function handleImageUpload(input) {
@@ -497,23 +569,22 @@
             const minAllowed = (gender === 'female') ? 1200 : 1500;
             if (calculatedTarget < minAllowed) calculatedTarget = minAllowed;
 
-            targetCalories = calculatedTarget;
+            appState.targetCal = calculatedTarget;
 
             const weightToLose = Math.max(0, currentWeight - targetWeight);
-            const dailyDeficitActual = tdee - targetCalories;
+            const dailyDeficitActual = tdee - appState.targetCal;
             let weeksToGoal = 0;
             if (dailyDeficitActual > 0 && weightToLose > 0) {
                 weeksToGoal = Math.ceil((weightToLose * 7700) / dailyDeficitActual / 7);
             }
 
-            document.getElementById('targetCalorieText').innerText = `ต้องกินไม่เกิน ${targetCalories.toLocaleString()} แคล/วัน`;
+            document.getElementById('targetCalorieText').innerText = `ต้องกินไม่เกิน ${appState.targetCal.toLocaleString()} แคล/วัน`;
             document.getElementById('bmrValue').innerText = `${Math.round(bmr).toLocaleString()} kcal`;
             document.getElementById('tdeeValue').innerText = `${Math.round(tdee).toLocaleString()} kcal`;
             document.getElementById('weightToLoseText').innerText = `${weightToLose.toFixed(1)} กก.`;
             document.getElementById('timeToGoalText').innerText = weeksToGoal > 0 ? `${weeksToGoal} สัปดาห์` : 'บรรลุเป้าหมายแล้ว';
 
-            document.getElementById('dashboardTargetCal').innerText = targetCalories.toLocaleString();
-            updateCalorieDashboard();
+            saveState();
         }
 
         function updateIFSchedule() {
@@ -521,85 +592,84 @@
             const startTimeStr = document.getElementById('eatingStartTime').value;
 
             const [fastHours, eatHours] = protocol.split(':').map(Number);
-            fastingTotalSeconds = fastHours * 3600;
-
+            
             const [startH, startM] = startTimeStr.split(':').map(Number);
             const eatEndH = (startH + eatHours) % 24;
             const formatTime = (h, m) => `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
 
             document.getElementById('eatingWindowTime').innerText = `${formatTime(startH, startM)} - ${formatTime(eatEndH, startM)} น.`;
             document.getElementById('fastingWindowTime').innerText = `${formatTime(eatEndH, startM)} - ${formatTime(startH, startM)} น.`;
-
-            if (!isFastingActive) {
-                fastingRemainingSeconds = fastingTotalSeconds;
-                updateTimerDisplay();
-            }
         }
+
+        let timerInterval = null;
 
         function toggleFasting() {
             const btn = document.getElementById('fastingToggleBtn');
             const badge = document.getElementById('fastingStatusBadge');
 
-            if (!isFastingActive) {
-                isFastingActive = true;
-                btn.innerHTML = '<i class="fa-solid fa-pause"></i> หยุดชั่วคราว Fasting';
-                btn.className = "w-full bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2.5 rounded-xl shadow-md transition text-xs flex items-center justify-center gap-1.5";
+            if (!appState.ifState.active) {
+                appState.ifState.active = true;
+                appState.ifState.startTime = Date.now();
+                const [fastHours] = document.getElementById('ifProtocol').value.split(':').map(Number);
+                appState.ifState.durationSec = fastHours * 3600;
+
+                btn.innerHTML = '<i class="fa-solid fa-stop"></i> ยกเลิก Fasting';
+                btn.className = "w-full bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2.5 rounded-xl shadow-md transition text-xs flex items-center justify-center gap-1.5";
                 
                 badge.innerText = "🔥 กำลัง Fasting (อดอาหาร)";
                 badge.className = "inline-block px-2.5 py-0.5 bg-emerald-500/30 text-emerald-300 text-[11px] rounded-full font-medium mb-2 border border-emerald-500/30 pulse-ring";
 
-                timerInterval = setInterval(() => {
-                    if (fastingRemainingSeconds > 0) {
-                        fastingRemainingSeconds--;
-                        updateTimerDisplay();
-                    } else {
-                        clearInterval(timerInterval);
-                        isFastingActive = false;
-                        alert('🎉 ยินดีด้วยคุณ ณัฐนิช! ครบกำหนดเวลา Fasting เรียบร้อยแล้ว');
-                        resetFasting();
-                    }
-                }, 1000);
+                timerInterval = setInterval(updateIFTimer, 1000);
             } else {
                 clearInterval(timerInterval);
-                isFastingActive = false;
-                btn.innerHTML = '<i class="fa-solid fa-play"></i> ทำต่อ (Resume)';
+                appState.ifState.active = false;
+                
+                btn.innerHTML = '<i class="fa-solid fa-play"></i> เริ่ม Fasting';
                 btn.className = "w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2.5 rounded-xl shadow-md transition text-xs flex items-center justify-center gap-1.5";
                 
-                badge.innerText = "⏸️ หยุดเวลาชั่วคราว";
-                badge.className = "inline-block px-2.5 py-0.5 bg-amber-500/30 text-amber-300 text-[11px] rounded-full font-medium mb-2 border border-amber-500/30";
+                badge.innerText = "พร้อมเริ่ม Fasting";
+                badge.className = "inline-block px-2.5 py-0.5 bg-purple-500/30 text-purple-300 text-[11px] rounded-full font-medium mb-2 border border-purple-500/30";
+                
+                document.getElementById('timerDisplay').innerText = "16:00:00";
+                document.getElementById('fastingProgressBar').style.width = "0%";
             }
+            saveState();
         }
 
-        function resetFasting() {
-            clearInterval(timerInterval);
-            isFastingActive = false;
-            fastingRemainingSeconds = fastingTotalSeconds;
-            
-            document.getElementById('fastingToggleBtn').innerHTML = '<i class="fa-solid fa-play"></i> เริ่ม Fasting';
-            document.getElementById('fastingStatusBadge').innerText = "พร้อมเริ่ม Fasting";
-            updateTimerDisplay();
-        }
+        function updateIFTimer() {
+            if (!appState.ifState.active) return;
 
-        function updateTimerDisplay() {
-            const hrs = Math.floor(fastingRemainingSeconds / 3600);
-            const mins = Math.floor((fastingRemainingSeconds % 3600) / 60);
-            const secs = fastingRemainingSeconds % 60;
+            const elapsedSec = Math.floor((Date.now() - appState.ifState.startTime) / 1000);
+            const remainSec = Math.max(0, appState.ifState.durationSec - elapsedSec);
+
+            const hrs = Math.floor(remainSec / 3600);
+            const mins = Math.floor((remainSec % 3600) / 60);
+            const secs = remainSec % 60;
 
             const format = (num) => String(num).padStart(2, '0');
             document.getElementById('timerDisplay').innerText = `${format(hrs)}:${format(mins)}:${format(secs)}`;
 
-            const elapsed = fastingTotalSeconds - fastingRemainingSeconds;
-            const progressPercent = (elapsed / fastingTotalSeconds) * 100;
+            const progressPercent = Math.min(100, (elapsedSec / appState.ifState.durationSec) * 100);
             document.getElementById('fastingProgressBar').style.width = `${progressPercent}%`;
+
+            if (remainSec <= 0) {
+                clearInterval(timerInterval);
+                alert('🎉 ครบกำหนดเวลา Fasting เรียบร้อยแล้วครับ คุณ ณัฐนิช!');
+                toggleFasting();
+            }
         }
 
         function updateCalorieDashboard() {
-            const remaining = targetCalories - consumedCalories;
+            const logs = appState.foodLogs[currentDateKey] || [];
+            const consumed = logs.reduce((sum, item) => sum + item.cal, 0);
+            const target = appState.targetCal || 1287;
+            const remaining = target - consumed;
 
-            document.getElementById('dashboardEatenCal').innerText = consumedCalories.toLocaleString();
+            document.getElementById('dashboardTargetCal').innerText = target.toLocaleString();
+            document.getElementById('dashboardEatenCal').innerText = consumed.toLocaleString();
             document.getElementById('dashboardRemainingCal').innerText = remaining > 0 ? remaining.toLocaleString() : '0';
 
-            const percent = Math.min(100, Math.round((consumedCalories / targetCalories) * 100));
+            const percent = Math.min(100, Math.round((consumed / target) * 100));
             document.getElementById('calProgressPercent').innerText = `${percent}%`;
             document.getElementById('calProgressBar').style.width = `${percent}%`;
         }
